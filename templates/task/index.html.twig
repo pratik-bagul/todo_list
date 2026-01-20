@@ -1,0 +1,40 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block body %}
+<h1>Tasks</h1>
+
+<a href="{{ path('task_new') }}" class="btn btn-primary">New Task</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th><th>Title</th><th>Done?</th><th>Due</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for task in tasks %}
+        <tr>
+            <td>{{ task.id }}</td>
+            <td><a href="{{ path('task_show', {id: task.id}) }}">{{ task.title }}</a></td>
+            <td>{{ task.isDone ? 'Yes' : 'No' }}</td>
+            <td>{{ task.dueAt ? task.dueAt|date('Y-m-d H:i') : '-' }}</td>
+            <td>
+                <a class="btn btn-sm btn-secondary" href="{{ path('task_edit', {id: task.id}) }}">Edit</a>
+                <form method="post" action="{{ path('task_delete', {id: task.id}) }}" style="display:inline" onsubmit="return confirm('Delete?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_task_' ~ task.id) }}">
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+                <form method="post" action="{{ path('task_toggle', {id: task.id}) }}" style="display:inline">
+                    <button class="btn btn-sm btn-outline-info">Toggle</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="5">No tasks yet.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
