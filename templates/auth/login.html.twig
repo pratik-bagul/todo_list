@@ -1,0 +1,33 @@
+
+{% extends 'base.html.twig' %}
+{% block title %}Login{% endblock %}
+{% block body %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white"><h4 class="mb-0">Login</h4></div>
+        <div class="card-body">
+          <form method="post" action="{{ path('auth_login') }}">
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input class="form-control" name="username" autocomplete="username" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-control" name="password" autocomplete="current-password" required>
+            </div>
+            <div class="d-flex justify-content-between">
+              <a href="{{ path('auth_register') }}" class="btn btn-outline-secondary">Register</a>
+              <button class="btn btn-primary">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="text-center mt-3">
+        <a href="{{ path('task_index') }}">Back to Tasks</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
