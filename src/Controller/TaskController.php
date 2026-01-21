@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,8 +28,8 @@ class TaskController extends AbstractController
     #[Route('', name: 'task_index', methods: ['GET'])]
     public function index(TaskRepository $repo, Request $request): Response
     {
-        $tasks = $repo->findBy([], ['dueAt' => 'ASC']);
-
+        //$tasks = $repo->findBy([], ['dueAt' => 'ASC']);
+        $tasks = $repo->findActiveOrdered();
         // If client asks for JSON, return JSON (simple content negotiation)
         if ($request->headers->get('Accept') === 'application/json') {
             return $this->json($tasks, 200, [], ['groups' => ['task:list']]);
@@ -104,19 +105,36 @@ class TaskController extends AbstractController
      * DELETE (CSRF-protected): POST /tasks/{id}
      * Submit from HTML form with hidden _method=DELETE or POST route dedicated to delete.
      */
+    
+/**
+     * Soft-delete: POST /tasks/{id}
+     */
     #[Route('/{id}', name: 'task_delete', methods: ['POST'])]
     public function delete(Task $task, Request $request, EntityManagerInterface $em): Response
     {
-        // CSRF token should be generated in Twig: {{ csrf_token('delete_task_' ~ task.id) }}
-        if ($this->isCsrfTokenValid('delete_task_' . $task->getId(), $request->request->get('_token'))) {
-            $em->remove($task);
+        if (!$this->isCsrfTokenValid('delete_task_' . $task->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return $this->redirectToRoute('task_index');
+        }
+
+        if (!$task->isDeleted()) {
+            $task->setDeletedAt(new DateTimeImmutable());
             $em->flush();
             $this->addFlash('info', 'Task deleted.');
-        } else {
-            $this->addFlash('error', 'Invalid CSRF token.');
         }
 
         return $this->redirectToRoute('task_index');
+    }
+
+    /**
+     * Trash listing: GET /tasks/trash
+     */
+    #[Route('/trash', name: 'task_trash', methods: ['GET'])]
+    public function trash(TaskRepository $repo): Response
+    {
+        return $this->render('task/trash.html.twig', [
+            'tasks' => $repo->findTrashed(),
+        ]);
     }
 
     /**
@@ -130,4 +148,79 @@ class TaskController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('task_index');
     }
+
+    // /**
+//      * Restore: POST /tasks/{id}/restore
+//      */
+//     #[Route('/{id}/restore', name: 'task_restore', methods: ['POST'])]
+//     public function restore(Task $task, EntityManagerInterface $em): Response
+//     {
+//         if ($task->isDeleted()) {
+//             $task->setDeletedAt(null);
+//             $em->flush();
+//             $this->addFlash('success', 'Task restored.');
+//         }
+//         return $this->redirectToRoute('task_trash');
+//     }
+
+//     /**
+//      * Purge forever (optional): POST /tasks/{id}/purge
+//      */
+//     #[Route('/{id}/purge', name: 'task_purge', methods: ['POST'])]
+//     public function purge(Task $task, Request $request, EntityManagerInterface $em): Response
+//     {
+//         // Optional CSRF
+//         if (!$this->isCsrfTokenValid('purge_task_' . $task->getId(), $request->request->get('_token'))) {
+//             $this->addFlash('error', 'Invalid CSRF token.');
+//             return $this->redirectToRoute('task_trash');
+//         }
+
+//         $em->remove($task);
+//         $em->flush();
+//         $this->addFlash('info', 'Task permanently deleted.');
+
+//         return $this->redirectToRoute('task_trash');
+//     }
+// }
+
 }
+
+
+
+//optionall;llllll
+
+
+
+// /**
+//      * Restore: POST /tasks/{id}/restore
+//      */
+//     #[Route('/{id}/restore', name: 'task_restore', methods: ['POST'])]
+//     public function restore(Task $task, EntityManagerInterface $em): Response
+//     {
+//         if ($task->isDeleted()) {
+//             $task->setDeletedAt(null);
+//             $em->flush();
+//             $this->addFlash('success', 'Task restored.');
+//         }
+//         return $this->redirectToRoute('task_trash');
+//     }
+
+//     /**
+//      * Purge forever (optional): POST /tasks/{id}/purge
+//      */
+//     #[Route('/{id}/purge', name: 'task_purge', methods: ['POST'])]
+//     public function purge(Task $task, Request $request, EntityManagerInterface $em): Response
+//     {
+//         // Optional CSRF
+//         if (!$this->isCsrfTokenValid('purge_task_' . $task->getId(), $request->request->get('_token'))) {
+//             $this->addFlash('error', 'Invalid CSRF token.');
+//             return $this->redirectToRoute('task_trash');
+//         }
+
+//         $em->remove($task);
+//         $em->flush();
+//         $this->addFlash('info', 'Task permanently deleted.');
+
+//         return $this->redirectToRoute('task_trash');
+//     }
+// }

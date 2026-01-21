@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Entity;
-
+use App\Entity\User;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
@@ -62,4 +63,42 @@ class Task
 
         return $this;
     }
+
+    
+    // #[ORM\ManyToOne(inversedBy: 'tasks')]
+    // #[ORM\JoinColumn(nullable: false)]
+    // private ?User $owner = null;
+
+    // public function getOwner(): ?User { return $this->owner; }
+    // public function setOwner(User $owner): self { $this->owner = $owner; return $this; }
+
+
+    
+// ...
+
+
+
+
+    // ... existing fields
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['task:detail'])] // include in detail JSON if you like
+    private ?\DateTimeImmutable $deletedAt = null;
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return null !== $this->deletedAt;
+    }
 }
+

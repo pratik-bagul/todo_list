@@ -1,0 +1,44 @@
+
+{% extends 'base.html.twig' %}
+{% block title %}Trash{% endblock %}
+
+{% block body %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">Trash</h1>
+    {{ path(&larr; Back to Tasks</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Deleted At</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for task in tasks %}
+        <tr>
+          <td>{{ task.id }}</td>
+          <td>{{ task.title }}</td>
+          <td>{{ task.deletedAt ? task.deletedAt|date('Y-m-d H:i') : '-' }}</td>
+          <td class="text-end">
+            {{ path(
+              <button class="btn btn-sm btn-success">Restore</button>
+            </form>
+
+            {{ path(
+              <input type="hidden" name="_token" value="{{ csrf_token('purge_task_' ~ task.id) }}">
+              <button class="btn btn-sm btn-outline-danger">Purge</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" class="text-center text-muted">Trash is empty.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
