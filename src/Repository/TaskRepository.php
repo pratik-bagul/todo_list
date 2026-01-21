@@ -77,6 +77,8 @@ public function findActiveForUser(User $owner): array
                 ->getQuery()->getResult();
         }
 
+        
+
 
 
     //    /**

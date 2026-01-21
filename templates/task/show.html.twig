@@ -1,12 +1,49 @@
 
 {% extends 'base.html.twig' %}
+
 {% block title %}Task #{{ task.id }}{% endblock %}
+
 {% block body %}
-<h1>{{ task.title }}</h1>
-<p><strong>Completed:</strong> {{ task.isDone ? 'Yes' : 'No' }}</p>
-<p><strong>Due:</strong> {{ task.dueAt ? task.dueAt|date('Y-m-d H:i') : '-' }}</p>
-<p>
-  <a class="btn btn-secondary" href="{{ path('task_edit', {id: task.id}) }}">Edit</a>
-  <a class="btn btn-light" href="{{ path('task_index') }}">Back</a>
-</p>
+<div class="container mt-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 m-0">Task Details</h1>
+        <a href="{{ path('task_index') }}" class="btn btn-outline-secondary">
+            ← Back
+        </a>
+    </div>
+
+    <!-- Task Card -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="card-title">{{ task.title }}</h4>
+
+            <p class="mb-2">
+                <strong>Status:</strong>
+                <span class="badge {{ task.isDone ? 'bg-success' : 'bg-warning text-dark' }}">
+                    {{ task.isDone ? 'Completed' : 'Pending' }}
+                </span>
+            </p>
+
+            <p class="mb-3">
+                <strong>Due:</strong>
+                {{ task.dueAt ? task.dueAt|date('Y-m-d H:i') : '—' }}
+            </p>
+
+            <div class="d-flex gap-2">
+                <a href="{{ path('task_edit', {id: task.id}) }}" class="btn btn-primary">
+                    Edit Task
+                </a>
+
+                <a href="{{ path('task_index') }}" class="btn btn-light">
+                    Back to List
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
 {% endblock %}

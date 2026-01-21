@@ -68,7 +68,7 @@ class TaskController extends AbstractController
      * SHOW: GET /tasks/{id}
      * Automatic ParamConverter fetches Task by id.
      */
-    #[Route('/{id}', name: 'task_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'task_show', methods: ['GET'], requirements:['id'=>'\d+'])]
     public function show(Task $task, Request $request): Response
     {
         if ($request->headers->get('Accept') === 'application/json') {
@@ -136,7 +136,37 @@ class TaskController extends AbstractController
             'tasks' => $repo->findTrashed(),
         ]);
     }
+    //      * Restore: POST /tasks/{id}/restore
+     
+    #[Route('/{id}/restore', name: 'task_restore', methods: ['POST'])]
+    public function restore(Task $task, EntityManagerInterface $em): Response
+    {
+        if ($task->isDeleted()) {
+            $task->setDeletedAt(null);
+            $em->flush();
+            $this->addFlash('success', 'Task restored.');
+        }
+        return $this->redirectToRoute('task_trash');
+    }
 
+    /**
+     * Purge forever (optional): POST /tasks/{id}/purge
+     */
+    #[Route('/{id}/purge', name: 'task_purge', methods: ['POST'])]
+    public function purge(Task $task, Request $request, EntityManagerInterface $em): Response
+    {
+        // Optional CSRF
+        if (!$this->isCsrfTokenValid('purge_task_' . $task->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return $this->redirectToRoute('task_trash');
+        }
+
+        $em->remove($task);
+        $em->flush();
+        $this->addFlash('info', 'Task permanently deleted.');
+
+        return $this->redirectToRoute('task_trash');
+    }
     /**
      * (Optional) QUICK TOGGLE: POST /tasks/{id}/toggle
      * Handy endpoint to mark done/undone without opening the edit form.
@@ -148,8 +178,6 @@ class TaskController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('task_index');
     }
-
-    
 }
 
 

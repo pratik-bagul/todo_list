@@ -5,7 +5,7 @@
 {% block body %}
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 m-0">Trash</h1>
-    {{ path(&larr; Back to Tasks</a>
+    <a class="btn btn-light" href="{{ path('task_index') }}">&larr; Back to Tasks</a>
   </div>
 
   <div class="table-responsive">
@@ -25,18 +25,22 @@
           <td>{{ task.title }}</td>
           <td>{{ task.deletedAt ? task.deletedAt|date('Y-m-d H:i') : '-' }}</td>
           <td class="text-end">
-            {{ path(
+            {# Restore (no CSRF in your controller for restore) #}
+            <form method="post" action="{{ path('task_restore', { id: task.id }) }}" class="d-inline">
               <button class="btn btn-sm btn-success">Restore</button>
             </form>
 
-            {{ path(
+            {# Purge (controller checks CSRF token 'purge_task_<id>') #}
+            <form method="post" action="{{ path('task_purge', { id: task.id }) }}" class="d-inline">
               <input type="hidden" name="_token" value="{{ csrf_token('purge_task_' ~ task.id) }}">
-              <button class="btn btn-sm btn-outline-danger">Purge</button>
+              <button class="btn btn-sm btn-outline-danger">delete permanently</button>
             </form>
           </td>
         </tr>
       {% else %}
-        <tr><td colspan="4" class="text-center text-muted">Trash is empty.</td></tr>
+        <tr>
+          <td colspan="4" class="text-center text-muted">Trash is empty.</td>
+        </tr>
       {% endfor %}
       </tbody>
     </table>

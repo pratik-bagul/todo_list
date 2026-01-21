@@ -82,7 +82,7 @@ class Task
     // ... existing fields
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['task:detail'])] // include in detail JSON if you like
+    //#[Groups(['task:detail'])] // include in detail JSON if you like
     private ?\DateTimeImmutable $deletedAt = null;
 
     public function getDeletedAt(): ?\DateTimeImmutable
@@ -100,5 +100,8 @@ class Task
     {
         return null !== $this->deletedAt;
     }
+
+
+    
 }
 
