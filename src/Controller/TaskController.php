@@ -149,40 +149,7 @@ class TaskController extends AbstractController
         return $this->redirectToRoute('task_index');
     }
 
-    // /**
-//      * Restore: POST /tasks/{id}/restore
-//      */
-//     #[Route('/{id}/restore', name: 'task_restore', methods: ['POST'])]
-//     public function restore(Task $task, EntityManagerInterface $em): Response
-//     {
-//         if ($task->isDeleted()) {
-//             $task->setDeletedAt(null);
-//             $em->flush();
-//             $this->addFlash('success', 'Task restored.');
-//         }
-//         return $this->redirectToRoute('task_trash');
-//     }
-
-//     /**
-//      * Purge forever (optional): POST /tasks/{id}/purge
-//      */
-//     #[Route('/{id}/purge', name: 'task_purge', methods: ['POST'])]
-//     public function purge(Task $task, Request $request, EntityManagerInterface $em): Response
-//     {
-//         // Optional CSRF
-//         if (!$this->isCsrfTokenValid('purge_task_' . $task->getId(), $request->request->get('_token'))) {
-//             $this->addFlash('error', 'Invalid CSRF token.');
-//             return $this->redirectToRoute('task_trash');
-//         }
-
-//         $em->remove($task);
-//         $em->flush();
-//         $this->addFlash('info', 'Task permanently deleted.');
-
-//         return $this->redirectToRoute('task_trash');
-//     }
-// }
-
+    
 }
 
 
