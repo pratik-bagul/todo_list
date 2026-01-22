@@ -4,33 +4,76 @@
 {% block title %}Create New Task{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-7">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Create New Task</h4>
-                </div>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-7 col-md-9">
 
-                <div class="card-body">
-                    {{ form_start(form) }}
-
-                    {{ form_widget(form) }}
-
-                    <div class="d-flex justify-content-between mt-3">
-                        <a href="{{ path('task_index') }}" class="btn btn-outline-secondary">
-                            ← Back
-                        </a>
-
-                        <button class="btn btn-success">
-                            ✓ Create Task
-                        </button>
-                    </div>
-
-                    {{ form_end(form) }}
-                </div>
-            </div>
+      <!-- Card -->
+      <div class="card bg-body shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3 d-flex align-items-center">
+          <i class="bi bi-plus-circle fs-4 me-2"></i>
+          <h4 class="mb-0">Create New Task</h4>
         </div>
+
+        <div class="card-body p-4">
+
+          {# Start form; disable browser native validation so Symfony errors show clearly #}
+          {{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+
+            {# Global form errors (rare, but show if present) #}
+            {% if form_errors(form) %}
+              <div class="alert alert-danger">
+                {{ form_errors(form) }}
+              </div>
+            {% endif %}
+
+            {# TITLE #}
+            <div class="mb-3">
+              {{ form_label(form.title, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+              {{ form_widget(form.title, { attr: { class: 'form-control', placeholder: 'e.g. Buy groceries' } }) }}
+              {{ form_errors(form.title) }}
+              <div class="form-text">Give your task a short descriptive title.</div>
+            </div>
+
+            {# DESCRIPTION (only if it exists in your form/entity) #}
+            {% if form.description is defined %}
+              <div class="mb-3">
+                {{ form_label(form.description, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                {{ form_widget(form.description, { attr: { class: 'form-control', rows: 4, placeholder: 'Optional details…' } }) }}
+                {{ form_errors(form.description) }}
+              </div>
+            {% endif %}
+
+            {# DUE DATE/TIME (only if it exists) #}
+            {% if form.dueAt is defined %}
+              <div class="mb-3">
+                {{ form_label(form.dueAt, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                {{ form_widget(form.dueAt, { attr: { class: 'form-control' } }) }}
+                {{ form_errors(form.dueAt) }}
+                <div class="form-text">Set a due date/time (optional).</div>
+              </div>
+            {% endif %}
+
+            {# Render any remaining unmapped/hidden fields #}
+            {{ form_rest(form) }}
+
+            <div class="d-flex justify-content-between mt-4">
+              <a href="{{ path('task_index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+              </a>
+
+              <button class="btn btn-success px-4">
+                <i class="bi bi-check-circle"></i> Create Task
+              </button>
+            </div>
+
+          {{ form_end(form) }}
+
+        </div>
+      </div>
+      <!-- /Card -->
+
     </div>
+  </div>
 </div>
 {% endblock %}

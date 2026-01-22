@@ -1,10 +1,117 @@
+
 {% extends 'base.html.twig' %}
+
 {% block title %}Edit Task #{{ task.id }}{% endblock %}
+
 {% block body %}
-<h1>Edit Task</h1>
-{{ form_start(form) }}
-  {{ form_widget(form) }}
-  <button class="btn btn-primary">Save</button>
-{{ form_end(form) }}
-<a href="{{ path('task_index') }}">Back</a>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+
+      <!-- Card -->
+      <div class="card bg-body shadow-sm border-0">
+        <div class="card-header py-3 d-flex align-items-center justify-content-between bg-primary text-white">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-pencil-square fs-4"></i>
+            <h4 class="mb-0">Edit Task #{{ task.id }}</h4>
+          </div>
+          <small class="opacity-75 d-none d-sm-inline">Use Ctrl/⌘ + Enter to save</small>
+        </div>
+
+        <div class="card-body p-4">
+
+          {# Start form; novalidate so Symfony errors appear clearly #}
+          {{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+
+            {# Global form errors (rare, but show if present) #}
+            {% if form_errors(form) %}
+              <div class="alert alert-danger">{{ form_errors(form) }}</div>
+            {% endif %}
+
+            {# Title #}
+            <div class="mb-3">
+              {{ form_label(form.title, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+              {{ form_widget(form.title, { attr: { class: 'form-control', placeholder: 'Task title' } }) }}
+              {{ form_errors(form.title) }}
+            </div>
+
+            {# Description (if present in your form) #}
+            {% if form.description is defined %}
+              <div class="mb-3">
+                {{ form_label(form.description, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                {{ form_widget(form.description, { attr: { class: 'form-control', rows: 4, placeholder: 'Optional details…' } }) }}
+                {{ form_errors(form.description) }}
+              </div>
+            {% endif %}
+
+            {# Due date/time #}
+            {% if form.dueAt is defined %}
+              <div class="mb-3">
+                {{ form_label(form.dueAt, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                {{ form_widget(form.dueAt, { attr: { class: 'form-control' } }) }}
+                {{ form_errors(form.dueAt) }}
+                <div class="form-text">Set or adjust the due date/time.</div>
+              </div>
+            {% endif %}
+
+            {# Render any remaining fields you might have (priority, etc.) #}
+            {{ form_rest(form) }}
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-2">
+
+              <div class="d-flex gap-2">
+                {# Quick toggle done (POST) — optional #}
+                <form method="post" action="{{ path('task_toggle', { id: task.id }) }}">
+                  <button class="btn btn-outline-info">
+                    <i class="bi bi-repeat"></i>
+                    <span class="d-none d-sm-inline">Toggle Done</span>
+                  </button>
+                </form>
+
+                {# Soft delete (POST + CSRF) — optional #}
+                <form method="post" action="{{ path('task_delete', { id: task.id }) }}"
+                      onsubmit="return confirm('Move this task to trash?');">
+                  <input type="hidden" name="_token" value="{{ csrf_token('delete_task_' ~ task.id) }}">
+                  <button class="btn btn-outline-danger">
+                    <i class="bi bi-trash3"></i>
+                    <span class="d-none d-sm-inline">Delete</span>
+                  </button>
+                </form>
+              </div>
+
+              <div class="d-flex gap-2">
+                <a href="{{ path('task_index') }}" class="btn btn-outline-secondary">
+                  <i class="bi bi-arrow-left"></i>
+                  <span class="d-none d-sm-inline">Back</span>
+                </a>
+
+                <button class="btn btn-success px-4">
+                  <i class="bi bi-check-circle"></i>
+                  Save
+                </button>
+              </div>
+            </div>
+
+          {{ form_end(form) }}
+
+        </div>
+      </div>
+      <!-- /Card -->
+
+    </div>
+  </div>
+</div>
+
+{# Optional: keyboard shortcut Ctrl/Cmd + Enter to submit #}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+    if (!form) return;
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        form.requestSubmit();
+      }
+    });
+  });
+</script>
 {% endblock %}
