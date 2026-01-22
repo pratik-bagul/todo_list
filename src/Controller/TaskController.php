@@ -7,6 +7,7 @@ use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,20 +26,34 @@ class TaskController extends AbstractController
      * LIST: GET /tasks
      * Shows all tasks (HTML) and returns JSON if requested via Accept: application/json.
      */
+
+   
     #[Route('', name: 'task_index', methods: ['GET'])]
-    public function index(TaskRepository $repo, Request $request): Response
+    public function index(TaskRepository $repo, Request $request, PaginatorInterface $paginator): Response
     {
-        //$tasks = $repo->findBy([], ['dueAt' => 'ASC']);
-        $tasks = $repo->findActiveOrdered();
-        // If client asks for JSON, return JSON (simple content negotiation)
+        $qb = $repo->createActiveOrderedQB(); // <-- now exists
+
+        $page    = $request->query->getInt('page', 1);
+        $perPage = $request->query->getInt('limit', 5);
+
+        $pagination = $paginator->paginate($qb, $page, $perPage);
+
         if ($request->headers->get('Accept') === 'application/json') {
-            return $this->json($tasks, 200, [], ['groups' => ['task:list']]);
+            return $this->json([
+                'items'         => iterator_to_array($pagination->getItems()),
+                'current_page'  => $pagination->getCurrentPageNumber(),
+                'per_page'      => $pagination->getItemNumberPerPage(),
+                'total_items'   => $pagination->getTotalItemCount(),
+                'total_pages'   => (int) ceil($pagination->getTotalItemCount() / max(1, $pagination->getItemNumberPerPage())),
+            ], 200, [], ['groups' => ['task:list']]);
         }
 
         return $this->render('task/index.html.twig', [
-            'tasks' => $tasks,
+            'pagination' => $pagination,
         ]);
     }
+
+
 
     /**
      * CREATE (Form): GET+POST /tasks/new

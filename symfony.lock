@@ -35,6 +35,9 @@
             "./migrations/.gitignore"
         ]
     },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.10.0"
+    },
     "symfony/asset-mapper": {
         "version": "7.4",
         "recipe": {
@@ -152,6 +155,19 @@
         "files": [
             "./config/packages/security.yaml",
             "./config/routes/security.yaml"
+        ]
+    },
+    "symfony/translation": {
+        "version": "7.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.3",
+            "ref": "620a1b84865ceb2ba304c8f8bf2a185fbf32a843"
+        },
+        "files": [
+            "./config/packages/translation.yaml",
+            "./translations/.gitignore"
         ]
     },
     "symfony/twig-bundle": {
