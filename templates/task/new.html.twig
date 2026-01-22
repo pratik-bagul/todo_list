@@ -7,37 +7,29 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-7">
-
-            <!-- Card -->
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white py-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">Create New Task</h4>
                 </div>
 
                 <div class="card-body">
-
                     {{ form_start(form) }}
 
-                        {{ form_widget(form) }}
+                    {{ form_widget(form) }}
 
-                        <div class="d-flex justify-content-between mt-4">
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="{{ path('task_index') }}" class="btn btn-outline-secondary">
+                            ← Back
+                        </a>
 
-                            <a href="{{ path('task_index') }}" class="btn btn-outline-secondary">
-                                ← Back
-                            </a>
-
-                            <button class="btn btn-success px-4">
-                                ✓ Create Task
-                            </button>
-
-                        </div>
+                        <button class="btn btn-success">
+                            ✓ Create Task
+                        </button>
+                    </div>
 
                     {{ form_end(form) }}
-
                 </div>
             </div>
-            <!-- End Card -->
-
         </div>
     </div>
 </div>
