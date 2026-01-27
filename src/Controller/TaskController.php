@@ -19,6 +19,8 @@ use Symfony\Component\Routing\Attribute\Route;
  * - We inject repositories and the EntityManager to talk to the database.
  * - We return either HTML (Twig templates) or JSON (for APIs).
  */
+
+
 #[Route('/tasks')]
 class TaskController extends AbstractController
 {
@@ -34,7 +36,7 @@ class TaskController extends AbstractController
         $qb = $repo->createActiveOrderedQB(); // <-- now exists
 
         $page    = $request->query->getInt('page', 1);
-        $perPage = $request->query->getInt('limit', 5);
+        $perPage = $request->query->getInt('limit', 7 );
 
         $pagination = $paginator->paginate($qb, $page, $perPage);
 

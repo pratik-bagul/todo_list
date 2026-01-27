@@ -29,7 +29,8 @@ class TaskRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.deletedAt IS NULL')
-            ->orderBy('t.dueAt', 'ASC')
+            ->orderBy('t.isDone', 'ASC')
+            ->addOrderBy('t.dueAt', 'ASC')
             ->addOrderBy('t.id', 'DESC');
     }
 
