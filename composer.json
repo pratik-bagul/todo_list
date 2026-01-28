@@ -7,15 +7,17 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/doctrine-bundle": "^2.18",
+        "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-migrations-bundle": "^3.7",
-        "doctrine/orm": "^3.6",
-        "knplabs/knp-paginator-bundle": "*",
+        "doctrine/orm": "^3.6.1",
+        "knplabs/knp-paginator-bundle": ">=6.10",
+        "predis/predis": "^3.3",
         "symfony/asset": "7.4.*",
         "symfony/asset-mapper": "7.4.*",
+        "symfony/cache": "7.4.*",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
-        "symfony/flex": "^2",
+        "symfony/flex": "^2.10",
         "symfony/form": "7.4.*",
         "symfony/framework-bundle": "7.4.*",
         "symfony/runtime": "7.4.*",
@@ -27,7 +29,10 @@
         "symfony/yaml": "7.4.*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.65"
+        "phpunit/phpunit": "^11.5",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/css-selector": "7.4.*",
+        "symfony/maker-bundle": "^1.65.1"
     },
     "config": {
         "allow-plugins": {
