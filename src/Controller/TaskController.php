@@ -100,7 +100,7 @@ class TaskController extends AbstractController
             $em->flush();
 
             // Invalidate all list pages
-            $tasksTaggedCache->invalidateTags(['tasks:all-active']);
+            $tasksTaggedCache->invalidateTags(['tasks_all-active']);
 
             $this->addFlash('success', 'Task created!');
             return $this->redirectToRoute('task_index');
@@ -122,7 +122,7 @@ class TaskController extends AbstractController
         CacheItemPoolInterface $taskItemCache
     ): Response {
         if ($request->headers->get('Accept') === 'application/json') {
-            $key = sprintf('task:%d', $task->getId());
+            $key = sprintf('task_%d', $task->getId());
 
             $cacheItem = $taskItemCache->getItem($key);
             if (!$cacheItem->isHit()) {
@@ -157,8 +157,8 @@ class TaskController extends AbstractController
             $em->flush();
 
             // Invalidate list and the item cache
-            $tasksTaggedCache->invalidateTags(['tasks:all-active']);
-            $taskItemCache->deleteItem(sprintf('task:%d', $task->getId()));
+            $tasksTaggedCache->invalidateTags(['tasks_all-active']);
+            $taskItemCache->deleteItem(sprintf('task_%d', $task->getId()));
 
             $this->addFlash('success', 'Task updated!');
             return $this->redirectToRoute('task_index');
@@ -192,7 +192,7 @@ class TaskController extends AbstractController
             $em->flush();
 
             $tasksTaggedCache->invalidateTags(['tasks:all-active']);
-            $taskItemCache->deleteItem(sprintf('task:%d', $task->getId()));
+            $taskItemCache->deleteItem(sprintf('task_%d', $task->getId()));
 
             $this->addFlash('info', 'Task deleted.');
         }
@@ -225,8 +225,8 @@ class TaskController extends AbstractController
             $task->setDeletedAt(null);
             $em->flush();
 
-            $tasksTaggedCache->invalidateTags(['tasks:all-active']);
-            $taskItemCache->deleteItem(sprintf('task:%d', $task->getId()));
+            $tasksTaggedCache->invalidateTags(['tasks_all-active']);
+            $taskItemCache->deleteItem(sprintf('task_%d', $task->getId()));
 
             $this->addFlash('success', 'Task restored.');
         }
@@ -252,8 +252,8 @@ class TaskController extends AbstractController
         $em->remove($task);
         $em->flush();
 
-        $tasksTaggedCache->invalidateTags(['tasks:all-active']);
-        $taskItemCache->deleteItem(sprintf('task:%d', $task->getId()));
+        $tasksTaggedCache->invalidateTags(['tasks_all-active']);
+        $taskItemCache->deleteItem(sprintf('task_%d', $task->getId()));
 
         $this->addFlash('info', 'Task permanently deleted.');
 
